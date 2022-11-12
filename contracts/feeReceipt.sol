@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.0;
+
 
 contract FeeReceipient {
 
@@ -14,8 +15,7 @@ contract FeeReceipient {
 
 
     function withdraw() public payable onlyOwner {
-        address payable reciver = msg.sender;
-        payable(reciver).transfer(address(this).balance);
+        payable(msg.sender).transfer(address(this).balance);
     }
 
 

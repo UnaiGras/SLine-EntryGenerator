@@ -1,12 +1,14 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity >=0.8.17;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SellerContract.sol";
 
+error TiketGenerator__NotApprovedContract();
 
-contract TiketFactory is ownable {
+
+contract TiketFactory is Ownable {
 
     //@notice platform fee for create nwe SellerContract.
     uint256 public platformFee;
@@ -19,21 +21,23 @@ contract TiketFactory is ownable {
 
     mapping(address => bool) private approvedContract;
 
-    event ContractCreated(address indexed creator, address indexed contract);
+    event ContractCreated(address indexed creator);
 
 
 
     constructor(
         uint256 _platformFee,
         address payable _feeReceipient,
-        ) {
+        uint256 _mintFee
+    ) {
         platformFee = _platformFee;
-        feeReceipient = _feeReceipient
+        feeReceipient = _feeReceipient;
+        mintFee = _mintFee;
     } 
 
 
     
-    function updateFeeReceipient(address payable _newReceipientt) public onlyOwner {
+    function updateFeeReceipient(address payable _newReceipient) public onlyOwner {
         feeReceipient = _newReceipient;
 
     }
@@ -64,14 +68,14 @@ contract TiketFactory is ownable {
             _name,
             feeReceipient,
             mintFee,
-            _symbol,
+            _symbol
         );
 
         approveSellerContract(address(seller));
-        seller.tranferOwnerShip(msg.sender);
-        emit ContractCreated(msg.sender, address(seller))
+        seller.transferOwnership(msg.sender);
+        emit ContractCreated(msg.sender);
 
-        return address(seller)
+        return address(seller);
 
     }
 
@@ -91,13 +95,13 @@ contract TiketFactory is ownable {
     }
 
     function isApprovedContract(address sellerContract) public view returns(bool) {
-        if (approvedContract[sellerContract] != address(0)){
+        if (approvedContract[sellerContract] == true){
 
             return true;
 
         } else {
 
-            revert TiketGenerator__NotApprovedContract(sellerContract);
+            revert TiketGenerator__NotApprovedContract();
 
         }
 
@@ -110,10 +114,8 @@ contract TiketFactory is ownable {
             _;
         }
 
-        revert TiketGenerator__NotApprovedContract(msg.sender);
+        revert TiketGenerator__NotApprovedContract();
 
     }
 
 }
-
-
