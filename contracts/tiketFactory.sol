@@ -1,6 +1,6 @@
-//SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT;
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SellerContract.sol";
@@ -81,7 +81,7 @@ contract TiketFactory is Ownable {
 
 
     //esta funcion va dentro de CreateNewContract
-    function approveSellerContract(address sellerContract) internal onlyOwner {
+    function approveSellerContract(address sellerContract) internal {
         require(approvedContract[sellerContract] == false, "This address is alredy approved");
 
         approvedContract[sellerContract] = true;
