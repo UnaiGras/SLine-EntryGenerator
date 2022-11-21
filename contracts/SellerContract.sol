@@ -248,7 +248,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         uint256 nTokens = _name.length;
 
         for(uint256 i; i <= nTokens; i++) {
-            _newTokenId;
+            _newTokenId();
             ids[_currentTokenId()] = true;
             _idForEntry[_currentTokenId()].name = _name[i];
             _idForEntry[_currentTokenId()].id = _currentTokenId();
@@ -269,7 +269,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
     ) public override onlyOwner {
 
         require(initialized == true, "The contract in not initialized");
-        _newTokenId;
+        _newTokenId();
         _idForEntry[_currentTokenId()].name = _name;
         _idForEntry[_currentTokenId()].id = _currentTokenId();
         _idForEntry[_currentTokenId()].maxSupply = _supply;
