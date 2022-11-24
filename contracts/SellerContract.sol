@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.17;
 
 /**
  * @dev Implementation of Multi-Token Standard contract
@@ -78,14 +78,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
   |     Public Transfer Functions     |
   |__________________________________*/
 
-  /**
-   * @notice Transfers amount amount of an _id from the _from address to the _to address specified
-   * @param _from    Source address
-   * @param _to      Target address
-   * @param _id      ID of the token type
-   * @param _amount  Transfered amount
-   * @param _data    Additional data with no specified format, sent in call to `_to`
-   */
+
     function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount, bytes memory _data)
       public
       override
@@ -97,14 +90,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
       _safeTransferFrom(_from, _to, _id, _amount);
     }
 
-  /**
-   * @notice Send multiple types of Tokens from the _from address to the _to address (with safety call)
-   * @param _from     Source addresses
-   * @param _to       Target addresses
-   * @param _ids      IDs of each token type
-   * @param _amounts  Transfer amounts per token type
-   * @param _data     Additional data with no specified format, sent in call to `_to`
-   */
+
     function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data)
       public
       virtual
@@ -118,13 +104,6 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
 
     }
 
-  /**
-   * @notice Transfers amount amount of an _id from the _from address to the _to address specified
-   * @param _from    Source address
-   * @param _to      Target address
-   * @param _id      ID of the token type
-   * @param _amount  Transfered amount
-   */
     function _safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount)
       public
       virtual 
@@ -137,13 +116,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
       emit TransferSingle(msg.sender, _from, _to, _id, _amount);
     }
 
-  /**
-   * @notice Send multiple types of Tokens from the _from address to the _to address (with safety call)
-   * @param _from     Source addresses
-   * @param _to       Target addresses
-   * @param _ids      IDs of each token type
-   * @param _amounts  Transfer amounts per token type
-    */
+
     function _safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts)
      internal
     {
@@ -160,11 +133,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
      }
     }
 
-  /**
-   * @notice Enable or disable approval for a third party ("operator") to manage all of caller's tokens
-   * @param _operator  Address to add to the set of authorized operators
-   * @param _approved  True if the operator is approved, false to revoke approval
-   */
+ 
   function setApprovalForAll(address _operator, bool _approved)
     external
     override
@@ -174,44 +143,29 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
     emit ApprovalForAll(msg.sender, _operator, _approved);
   }
 
-  /**
-   * @notice Queries the approval status of an operator for a given owner
-   * @param _owner     The owner of the Tokens
-   * @param _operator  Address of authorized operator
-   * @return isOperator Bool of approved for all
-   */
-  function isApprovedForAll(address _owner, address _operator)
-    public view virtual override returns (bool isOperator)
-  {
-    return operators[_owner][_operator];
-  }
+  
+    function isApprovedForAll(address _owner, address _operator)
+     public view virtual override returns (bool isOperator)
+    {
+     return operators[_owner][_operator];
+    }
 
 
   /***********************************|
   |         Balance Functions         |
   |__________________________________*/
 
-  /**
-   * @notice Get the balance of an account's Tokens
-   * @param _owner  The address of the token holder
-   * @param _id     ID of the Token
-   * @return The _owner's balance of the Token type requested
-   */
-  function balanceOf(address _owner, uint256 _id)
-    public view override returns (uint256)
-  {
-    return balances[_owner][_id];
-  }
 
-  /**
-    * @notice Get the balance of multiple account/token pairs
-    * @param _owners The addresses of the token holders
-    * @param _ids    ID of the Tokens
-    * @return        The _owner's balance of the Token types requested (i.e. balance for each (owner, id) pair)
-    */
-   function balanceOfBatch(address[] memory _owners, uint256[] memory _ids)
+    function balanceOf(address _owner, uint256 _id)
+     public view override returns (uint256)
+    {
+     return balances[_owner][_id];
+    }
+
+
+    function balanceOfBatch(address[] memory _owners, uint256[] memory _ids)
      public view override returns (uint256[] memory)
-   {
+    {
      require(_owners.length == _ids.length, "ERC1155#balanceOfBatch: INVALID_ARRAY_LENGTH");
 
      // Variables

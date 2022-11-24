@@ -103,11 +103,13 @@ contract SLineMarketplace is Ownable {
     //address of storage contract with addresses to call
     IaddressesChest public addressChest;
 
+    bytes4 public constant SELLER_ID = type(ISellerContract).interfaceId; 
+
 
     constructor (
         uint256 _platformFee,
         address payable _feeRecipient
-    ) public {
+    ) {
         platformFee = _platformFee;
         feeRecipient = _feeRecipient;
     }
@@ -317,19 +319,16 @@ contract SLineMarketplace is Ownable {
         uint256 feeAmount = price * platformFee / 100; 
         //comprobar balances de ambos (msg.sender es quien tiene las entradas y creator esquien hizo la offer)
         address tkn = offer.payToken;
-        if (_validPayToken(tkn)){
-            IERC20 Token = IERC20(tkn);
-        } else {
-            revert;
-        }
+        require(_validPayToken(tkn), "invalid pay token");
+        
 
-        Token.safeTransferFrom(
+        IERC20(tkn).transferFrom(
             _creator, 
             feeRecipient, 
             feeAmount
         );
 
-        Token.safeTransferFrom(
+        IERC20(tkn).transferFrom(
             _creator,
             msg.sender,
             price - feeAmount
@@ -341,7 +340,8 @@ contract SLineMarketplace is Ownable {
             msg.sender,
             _creator,
             _tokenId,
-            offer.quantity
+            offer.quantity,
+            bytes("")
         );
 
         emit EntrySold(
@@ -351,7 +351,7 @@ contract SLineMarketplace is Ownable {
             _tokenId,
             offer.quantity,
             address(offer.payToken),
-            offer.pricePerItemgf
+            offer.pricePerItem
         );
         
         
@@ -373,24 +373,26 @@ contract SLineMarketplace is Ownable {
         address _payToken,
         address _owner
    ) private {
+
+        _validPayToken(_payToken);
         Listing memory entry = listings[_nftAddress][_tokenId][_owner];
 
         uint256 price = entry.pricePerItem * entry.quantity;
         uint256 feeAmount = price * platformFee / 100;
 
-        IERC20(_payToken).safetransferFrom(
+        IERC20(_payToken).transferFrom(
             msg.sender, 
             feeRecipient, 
             feeAmount
         );
 
-        IERC20(_payToken).safetransferFrom(
+        IERC20(_payToken).transferFrom(
             msg.sender, 
-            owner, 
+            _owner, 
             price - feeAmount
         );
 
-        if (IERC165(_nftAddress).supportsInterface(ISellerContract)) {
+        if (IERC165(_nftAddress).supportsInterface(SELLER_ID)) {
             ISellerContract(_nftAddress).safeTransferFrom(
                 _owner,
                 msg.sender,
@@ -399,7 +401,7 @@ contract SLineMarketplace is Ownable {
                 bytes("")
             );
         } else {
-            revert;
+            revert("kva");
         }
 
         emit EntrySold(
@@ -409,15 +411,14 @@ contract SLineMarketplace is Ownable {
             _tokenId,
             entry.quantity,
             _payToken,
-            entry.pricePerItem,
-            price / entry.quantity
+            entry.pricePerItem
         );
     }
 
     
-    function _isSellerToken(address _nftAddress) internal returns(bool) {
+    function _isSellerToken(address _nftAddress) internal view returns(bool) {
         bool success = 
-        IERC165(_nftAddress).supportsInterface(ISellerContract) &&
+        IERC165(_nftAddress).supportsInterface(SELLER_ID) &&
         _isApprovedContract(_nftAddress);
         require(success,"...");
         return true;
@@ -426,8 +427,8 @@ contract SLineMarketplace is Ownable {
     //Escribir todas las functiones que voy  a implementar
 
     
-    function _validPayToken(address tokenAddress) internal returns(bool) {
-         bool success = IValidTokens(addressChest.validTokens).enabledToken(tokenAddress);
+    function _validPayToken(address tokenAddress) internal view returns(bool) {
+         bool success = IValidTokens(addressChest.validTokens()).enabledToken(tokenAddress);
          require(
             success, 
             "Not valid payment"
@@ -440,7 +441,7 @@ contract SLineMarketplace is Ownable {
         uint256 _tokenId,
         address _owner,
         uint256 _quantity
-    ) internal {
+    ) internal view {
         ISellerContract entry = ISellerContract(_nftAddress);
         require(
             entry.balanceOf(_owner, _tokenId) >= _quantity,
@@ -471,15 +472,7 @@ contract SLineMarketplace is Ownable {
         delete (listings[_nftAddress][_tokenId][_owner]);
         emit EntryCanceled(_owner, _nftAddress, _tokenId);
     }
-} 
-
-
-
-/**hacer ofertas de compra generales de un tipo de entrada*/ 
-
-
-/*override en SellerContract de transfer, safetra...  para que solo se puedan vender
- a traves de este marketplace.*/
+}
 
 /** function para los royalties de las empresas Y DE LOS USUARIOS(1%).*/
 

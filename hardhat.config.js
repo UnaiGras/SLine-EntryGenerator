@@ -12,8 +12,8 @@ require("hardhat-deploy")
 
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
 const PRIVATE_KEY =
-    process.env.PRIVATE_KEY ||
-    "0x11ee3108a03081fe260ecdc106554d09d9d1209bcafd46942b10e02943effc4a"
+    process.env.PRIVATE_KEY 
+    
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
 
 module.exports = {
@@ -52,8 +52,8 @@ module.exports = {
     },
     namedAccounts: {
         deployer: {
-            default: 0, // here this will by default take the first account as deployer
-            1: 0, // similarly on mainnet it will take the first account as deployer. Note though that depending on how hardhat network are configured, the account 0 on one network can be different than on another
+            default: 0,
+            1: 0, 
         },
     },
     mocha: {
