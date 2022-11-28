@@ -2,7 +2,6 @@ require("@nomiclabs/hardhat-waffle")
 require("hardhat-gas-reporter")
 require("@nomiclabs/hardhat-etherscan")
 require("dotenv").config()
-require("solidity-coverage")
 require("hardhat-deploy")
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
@@ -10,11 +9,11 @@ require("hardhat-deploy")
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY || ""
+
 const PRIVATE_KEY =
     process.env.PRIVATE_KEY 
-    
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || ""
+const ALCHEMY_KEY = process.env.ALCHEMY_KEY
+const ETHERSCAN_API_KEY= process.env.ETHERSCAN_API_KEY
 
 module.exports = {
     defaultNetwork: "hardhat",
@@ -22,6 +21,10 @@ module.exports = {
         hardhat: {
             chainId: 31337,
             // gasPrice: 130000000000,
+        },
+        goerli: {
+            url: `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+            accounts:[PRIVATE_KEY],
         },
     },
     solidity: {

@@ -3,7 +3,6 @@ const {ethers} = require("hardhat")
 async function main() {
 
   let prevUserBalance;
-  let finalUserBalance;
   const value = ethers.utils.parseEther("1");
 	const [deployer] = await ethers.getSigners();
 
@@ -46,14 +45,8 @@ async function main() {
   console.log("TiketFactory deployed at:", TiketFactory.address);
   console.log("------------------------------------------------------")
   
-  finalUserBalance = deployer.getBalance(); 
-  console.log("The cost of deploying was:", prevUserBalance - finalUserBalance);
-
-
-  const newSeller = await TiketFactory.createNewSeller("Waka 25/11","Wka" ,{value: value, from: deployer} )
   
-  
-  console.log("New seller address", newSeller)
+
 
 
 
