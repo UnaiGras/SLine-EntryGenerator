@@ -22,10 +22,10 @@ module.exports = {
             chainId: 31337,
             // gasPrice: 130000000000,
         },
-        goerli: {
-            url: `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_KEY}`,
-            accounts:[PRIVATE_KEY],
-        },
+        //goerli: {
+        //    url: `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_KEY}`,
+        //    accounts:[PRIVATE_KEY],
+        //},
     },
     solidity: {
         compilers: [
@@ -43,9 +43,9 @@ module.exports = {
             },
         ],
     },
-    etherscan: {
-        apiKey: ETHERSCAN_API_KEY,
-    },
+    //etherscan: {
+    //    apiKey: ETHERSCAN_API_KEY,
+    //},
     gasReporter: {
         enabled: true,
         currency: "USD",

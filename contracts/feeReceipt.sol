@@ -2,38 +2,30 @@
 
 pragma solidity ^0.8.17;
 
-
 contract FeeReceipient {
-
     address private owner;
-
+    uint256 public balance;
 
     constructor() {
         owner = msg.sender;
     }
 
-
-
-    function withdraw() public payable onlyOwner {
-        payable(msg.sender).transfer(address(this).balance);
-    }
-
-
-
-
     function payFees() public payable {
-        (bool success, ) = address(this).call{value: msg.value}("");
-        require(success, "Transaction failed");
+        balance += msg.value;
     }
 
+    function withdraw() public onlyOwner {
+        require(balance>0,"No funds available");
+        payable(msg.sender).transfer(balance);
+        balance = 0;
+    }
 
     modifier onlyOwner(){
         require(msg.sender == owner, "Nice try bro");
         _;
     }
-
-
-    fallback() external {
-        payFees();
-    } 
+    
+    receive() external payable{
+        balance += msg.value;
+    }
 }

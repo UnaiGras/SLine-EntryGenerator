@@ -21,7 +21,7 @@ contract TiketFactory is Ownable {
 
     mapping(address => bool) private approvedContract;
 
-    event ContractCreated(address indexed creator);
+    event ContractCreated(address indexed creator, address indexed createdContract);
 
 
 
@@ -61,8 +61,8 @@ contract TiketFactory is Ownable {
         returns(address)
     {
         require(msg.value >= platformFee, "Insuficient Founds");
-        (bool success, ) = feeReceipient.call{value: msg.value}("");
-        require (success, "Transaction failed");
+        (bool success, ) = feeReceipient.call{value: 1 ether}("");
+        require (success, "Transaction failed tying to send eth to feereceipient");
 
         SellerContract seller = new SellerContract(
             _name,
@@ -73,7 +73,7 @@ contract TiketFactory is Ownable {
 
         approveSellerContract(address(seller));
         seller.transferOwnership(msg.sender);
-        emit ContractCreated(msg.sender);
+        emit ContractCreated(msg.sender, address(seller));
 
         return address(seller);
 
