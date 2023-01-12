@@ -37,12 +37,12 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
     mapping (address => mapping(address => bool)) internal operators;
 
   // Events
-    event EntrysSelled(uint256 _supply, uint256 _id, address _to);
+    event EntrysSelled(uint256 indexed _supply, uint256 indexed _id, address indexed _to);
     event TransferSingle(address indexed _operator, address indexed _from, address indexed _to, uint256 _id, uint256 _amount);
     event TransferBatch(address indexed _operator, address indexed _from, address indexed _to, uint256[] _ids, uint256[] _amounts);
     event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
     event URI(string _uri, uint256 indexed _id);
-    event NewTokenCreated(string _uri, uint256 _supply, string _name, uint256 _price);
+    event NewTokenCreated(string _uri, uint256 _supply, string _name, uint256 _price, uint256 indexed _identifier);
 
 
     struct Entrys {
@@ -198,7 +198,6 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
             _name.length == _supply.length && _supply.length == _uri.length && _uri.length == _price.length,
             "The length of features dont match"
         );
-        require(initialized == true, "The contract in not initialized");
 
         uint256 nTokens = _name.length;
 
@@ -210,6 +209,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
             _idForEntry[_currentTokenId()].maxSupply = _supply[i];
             _idForEntry[_currentTokenId()].tokenURI = _uri[i];
             _idForEntry[_currentTokenId()].mintPrice = _price[i];
+            emit NewTokenCreated(_uri[i], _supply[i], _name[i], _price[i], _currentTokenId());
         } 
 
     }
@@ -223,13 +223,13 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         uint256 _price
     ) public override onlyOwner {
 
-        require(initialized == true, "The contract in not initialized");
         _newTokenId();
         _idForEntry[_currentTokenId()].name = _name;
         _idForEntry[_currentTokenId()].id = _currentTokenId();
         _idForEntry[_currentTokenId()].maxSupply = _supply;
         _idForEntry[_currentTokenId()].tokenURI = _uri;
         _idForEntry[_currentTokenId()].mintPrice = _price;
+        emit NewTokenCreated(_uri, _supply, _name, _price, _currentTokenId());
     } 
 
 
@@ -242,15 +242,13 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         require(initialized == true, "The contract in not initialized");
         require(_to != address(0), "Invalid address.");
         require(_supply <= _idForEntry[_id].maxSupply, "All entrys are selled.");
-
+        //restar los supplys(por hacer)
         uint256 price = _idForEntry[_id].mintPrice * _supply;
         uint256 fee = caculatePlatformMintFee(_id, _supply);
 
         require(msg.value >= price + fee, "Insuficient Founds.");
         (bool success, ) = feeReceipient.call{value: fee}("");
-        require(success, "Transaction failed.");
-        (bool Success, ) = address(this).call{value: price}("");
-        require(Success, "Transaction failed.");
+        require(success, "Transaction failed in fee calling.");
 
 
         balances[_to][_id] = _supply;
