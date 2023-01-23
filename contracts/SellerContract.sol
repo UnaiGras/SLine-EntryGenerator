@@ -251,7 +251,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         require(success, "Transaction failed in fee calling.");
 
 
-        balances[_to][_id] = _supply;
+        balances[_to][_id] += _supply;
         emit EntrysSelled(_supply, _id, _to);
     }
 
