@@ -107,9 +107,12 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
 
     function _safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount)
       public
-      virtual 
+      virtual
     {
       // Update balances
+      require((msg.sender == _from) || isApprovedForAll(_from, msg.sender), "ERC1155#safeTransferFrom: INVALID_OPERATOR");
+      require(_to != address(0),"ERC1155#safeTransferFrom: INVALID_RECIPIENT");
+
       balances[_from][_id] = balances[_from][_id] - _amount; // Subtract amount
       balances[_to][_id] = balances[_to][_id] + _amount;     // Add amount
 
