@@ -80,9 +80,8 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
   |__________________________________*/
 
 
-    function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount, bytes memory _data)
+    function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount)
       public
-      override
     {
       require((msg.sender == _from) || isApprovedForAll(_from, msg.sender), "ERC1155#safeTransferFrom: INVALID_OPERATOR");
       require(_to != address(0),"ERC1155#safeTransferFrom: INVALID_RECIPIENT");
@@ -92,10 +91,9 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
     }
 
 
-    function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data)
+    function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts)
       public
       virtual
-      override
     {
       // Requirements
       require((msg.sender == _from) || isApprovedForAll(_from, msg.sender), "ERC1155#safeBatchTransferFrom: INVALID_OPERATOR");
@@ -245,15 +243,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         require(initialized == true, "The contract in not initialized");
         require(_to != address(0), "Invalid address.");
         require(_supply <= _idForEntry[_id].maxSupply, "All entrys are selled.");
-        //restar los supplys(por hacer)
-        uint256 price = _idForEntry[_id].mintPrice * _supply;
-        uint256 fee = caculatePlatformMintFee(_id, _supply);
-
-        require(msg.value >= price + fee, "Insuficient Founds.");
-        (bool success, ) = feeReceipient.call{value: fee}("");
-        require(success, "Transaction failed in fee calling.");
-
-
+        
         balances[_to][_id] += _supply;
         emit EntrysSelled(_supply, _id, _to);
     }
@@ -309,14 +299,7 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         tokenIdCounter += 1;
     }
 
-
     //function para calcular el precio de minteo que se lleva la plataforma. Seria _idForEntry[_id].mintprice /100 * platformFee (de esta forma lo que se lleva el receipt es porcentual al mint price de cada minteo.
-    function caculatePlatformMintFee(uint256 _id, uint256 _supply) public view override returns(uint256){
-        uint256 mintPrice = _idForEntry[_id].mintPrice;
-        uint256 _FeePerSupply = mintPrice / 100 * platformFee;
-        uint256 _platformFee = _FeePerSupply * _supply;
-        return _platformFee;
-    }
 
     function transferOwnership(address newOwner) public override onlyOwner{
         _transferOwnership(newOwner);

@@ -6,10 +6,10 @@ import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 interface ISellerContract is IERC165 {
 
 
-    function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount, bytes memory _data) external;
+    function safeTransferFrom(address _from, address _to, uint256 _id, uint256 _amount) external;
 
 
-    function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts, bytes memory _data) external;
+    function safeBatchTransferFrom(address _from, address _to, uint256[] memory _ids, uint256[] memory _amounts) external;
 
 
     function setApprovalForAll(address _operator, bool _approved) external;
