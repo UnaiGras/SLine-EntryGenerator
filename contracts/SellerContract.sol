@@ -247,6 +247,22 @@ contract SellerContract is Ownable, ERC165, ISellerContract {
         balances[_to][_id] += _supply;
         emit EntrysSelled(_supply, _id, _to);
     }
+    
+    function mintBatch(
+        address[] memory _to,
+        uint256 _id,
+        uint256[] memory _supply
+    ) public payable {
+        require(initialized == true, "The contract in not initialized");
+        //restar los supplys(por hacer)
+        uint256 nloops = _to.length;
+
+        for(uint256 i; i < nloops; i++){
+          
+          balances[_to[i]][_id] += _supply[i];
+          emit EntrysSelled(_supply[i], _id, _to[i]);
+        }
+    }
 
 
     function withdraw() public override onlyOwner {
