@@ -52,9 +52,7 @@ interface ISellerContract is IERC165 {
 
 
     function _currentTokenId() external view returns(uint256);
-    
 
-    function caculatePlatformMintFee(uint256 _id, uint256 _supply) external returns(uint256);
 
 }
 
